@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-//using System.Drawing;
 using System.IO;
 using Android.App;
 using Android.Content;
@@ -18,11 +17,7 @@ namespace Image2ArtNet
     [Activity(Label = "12x12", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : Activity
     {
-        int count = 0;
-        MemoryStream ms;
         UdpClient client;
-        NetworkStream ns;
-        BinaryWriter br;
         int xdim = 12;
         int ydim = 12;
         Switch serpentine;
@@ -41,32 +36,29 @@ namespace Image2ArtNet
             SetContentView(Resource.Layout.Main);
 
             // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.MyButton);
-            Button button1 = FindViewById<Button>(Resource.Id.button1);
-            ImageView image = FindViewById<ImageView>(Resource.Id.imageView1);
-            Button button2 = FindViewById<Button>(Resource.Id.button2);
-            Button button3 = FindViewById<Button>(Resource.Id.button3);
-            serpentine = FindViewById<Switch>(Resource.Id.switch1);
-            fliphor = FindViewById<Switch>(Resource.Id.switch2);
-            flipver = FindViewById<Switch>(Resource.Id.switch3);
-            IP = FindViewById<EditText>(Resource.Id.editText1);
-            xpoints = FindViewById<EditText>(Resource.Id.editText2);
-            ypoints = FindViewById<EditText>(Resource.Id.editText3);
+            Button btnSelect = FindViewById<Button>(Resource.Id.btnSelect);
+            Button btnSend = FindViewById<Button>(Resource.Id.btnSend);
+            ImageView image = FindViewById<ImageView>(Resource.Id.imgPicture);
+            Button btnStore = FindViewById<Button>(Resource.Id.btnStore);
+            Button btnRecall = FindViewById<Button>(Resource.Id.btnRecall);
+            serpentine = FindViewById<Switch>(Resource.Id.swiSerpentine);
+            fliphor = FindViewById<Switch>(Resource.Id.swiFlipHor);
+            flipver = FindViewById<Switch>(Resource.Id.swiFlipVer);
+            IP = FindViewById<EditText>(Resource.Id.txtIP);
+            xpoints = FindViewById<EditText>(Resource.Id.txtX);
+            ypoints = FindViewById<EditText>(Resource.Id.txtY);
             xdim = int.Parse(xpoints.Text);
             ydim = int.Parse(ypoints.Text);
 
+            Spinner spinner = FindViewById<Spinner>(Resource.Id.spnMemory);
 
-
-            Spinner spinner = FindViewById<Spinner>(Resource.Id.spinner1);
-
-            // spinner.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinner_ItemSelected);
+            // Load the spinner values from the text resouce
             var adapter = ArrayAdapter.CreateFromResource(
                     this, Resource.Array.number_array, Android.Resource.Layout.SimpleSpinnerItem);
-
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinner.Adapter = adapter;
 
+            // Restore preferences
             using (ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Android.App.Application.Context))
             {
 
@@ -78,10 +70,9 @@ namespace Image2ArtNet
                 ypoints.Text = prefs.GetString("ypoints", "12");
 
             }
-            
 
-
-            button.Click += delegate
+            // Shows the image selection dialog
+            btnSelect.Click += delegate
             {
 
                 var imageIntent = new Intent();
@@ -89,39 +80,32 @@ namespace Image2ArtNet
                 imageIntent.SetAction(Intent.ActionGetContent);
                 StartActivityForResult(
                     Intent.CreateChooser(imageIntent, "Select image"), 0);
-
-
-
+                
             };
-            button1.Click += delegate
-           {
-               count++;
-               //image.SetImageResource(Resource.Drawable.testpattern);
-               image.BuildDrawingCache(true);
-               Bitmap bmp = Bitmap.CreateBitmap(image.GetDrawingCache(true));
 
-               byte[] buffer = new byte[512];
-               byte[] pix;
+            // Send the image data to the display
+            btnSend.Click += delegate
+            {
 
-               //System.Buffer.BlockCopy(artnet.ToCharArray(), 0, buffer, 0, artnet.Length);
+                image.BuildDrawingCache(true);
+                Bitmap bmp = Bitmap.CreateBitmap(image.GetDrawingCache(true));
 
-               pix = BitConverter.GetBytes(bmp.GetPixel(1, 1));
+                byte[] buffer = new byte[512];
+                byte[] pix;
 
-               image.BuildDrawingCache(false);
-               //buffer[100] = pix[0];
-               buffer[count] = 255;
-               //buffer[30] = 255;
-               count++;
-               //image.SetImageResource(Resource.Drawable.Icon);
-               int xmax = image.Width;
-               int ymax = image.Height;
+                pix = BitConverter.GetBytes(bmp.GetPixel(1, 1));
 
-               int pos;
-               int x;
-               int y;
+                image.BuildDrawingCache(false);
 
+                int xmax = image.Width;
+                int ymax = image.Height;
 
-               byte[] gamma = {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                int pos;
+                int x;
+                int y;
+
+                // imperical gamma values
+                byte[] gamma = {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                                 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
                                 1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
                                 2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,
@@ -140,76 +124,75 @@ namespace Image2ArtNet
                
 
 
-               for (int yn = 0; yn < ydim; yn++)
-               {
-                   for (int xn = 0; xn < xdim; xn++)
-                   {
-                      pix = BitConverter.GetBytes(bmp.GetPixel(1 + xn*(xmax/xdim), 1+(ydim-yn-1)*(ymax/ydim)));
+                for (int yn = 0; yn < ydim; yn++)
+                {
+                    for (int xn = 0; xn < xdim; xn++)
+                    {
+                        pix = BitConverter.GetBytes(bmp.GetPixel(1 + xn * (xmax / xdim), 1 + (ydim - yn - 1) * (ymax / ydim)));
 
-                       if (fliphor.Checked)
-                       {
-                           x = xdim - 1 - xn;
-                       }
-                       else
-                       {
-                           x = xn;
-                       }
-                       if (flipver.Checked)
-                       {
-                           y = ydim - 1 - yn;
-                       }
-                       else
-                       {
-                           y = yn;
-                       }
+                        if (fliphor.Checked)
+                        {
+                            x = xdim - 1 - xn;
+                        }
+                        else
+                        {
+                            x = xn;
+                        }
+                        if (flipver.Checked)
+                        {
+                            y = ydim - 1 - yn;
+                        }
+                        else
+                        {
+                            y = yn;
+                        }
 
-                       if (serpentine.Checked == true)
-                       {
-                           if (((int)(y / 2.0) == (y / 2.0)) & (serpentine.Checked == true))
-                           {
-                               pos = 3 * (x + (xdim * y));
+                        if (serpentine.Checked == true)
+                        {
+                            if (((int)(y / 2.0) == (y / 2.0)) & (serpentine.Checked == true))
+                            {
+                                pos = 3 * (x + (xdim * y));
                             }
-                           else
-                           {
-                               pos = 3 * ((xdim * (y + 1)) - 1 - x); 
-                           }
-                       }
-                       else                       
-                       {
-                               pos = 3 * (x + (xdim * y));
-                       }
-
-                       
-                       buffer[pos] = gamma[pix[2]]; //red
-                       buffer[pos + 1] = gamma[pix[1]]; //green
-                       buffer[pos + 2] = gamma[pix[0]]; //blue
-                   }
-               }
+                            else
+                            {
+                                pos = 3 * ((xdim * (y + 1)) - 1 - x);
+                            }
+                        }
+                        else
+                        {
+                            pos = 3 * (x + (xdim * y));
+                        }
 
 
-                   client = new UdpClient();
-               try
-               {
-                   client.Send(buffer, buffer.Length, IP.Text, 6454);
-                   client.Close();
-               }
-               catch (Exception ex)
-               {
-                   Console.WriteLine(ex.Message);
-               }
+                        buffer[pos] = gamma[pix[2]]; //red
+                        buffer[pos + 1] = gamma[pix[1]]; //green
+                        buffer[pos + 2] = gamma[pix[0]]; //blue
+                    }
+                }
 
-           };
 
-            button2.Click += delegate
+                client = new UdpClient();
+                try
+                {
+                    client.Send(buffer, buffer.Length, IP.Text, 6454);
+                    client.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            };
+
+            // store data to display memory
+            btnStore.Click += delegate
             {
 
                 using (WebClient client = new WebClient())
                 {
                     try
                     {
-                        // Download data.
-                        string value = client.DownloadString("http://" + IP.Text + "/?file=save&nr=" + spinner.SelectedItemPosition.ToString());
-                        
+                        string value = client.DownloadString("http://" + IP.Text + "/?file=save&nr=" + spinner.SelectedItemPosition.ToString());                        
                     }
                     catch
                     {
@@ -221,23 +204,20 @@ namespace Image2ArtNet
 
             };
 
-
-            button3.Click += delegate
+            // recall data prom display memory
+            btnRecall.Click += delegate
             {
 
                 using (WebClient client = new WebClient())
                 {
                     try
                     {
-                        // Download data.
                         string value = client.DownloadString("http://" + IP.Text + "/?file=load&nr=" + spinner.SelectedItemPosition.ToString());
-
                     }
                     catch
                     {
 
                     }
-
 
                 }
 
@@ -245,21 +225,21 @@ namespace Image2ArtNet
 
         }
 
+        // image selected, reformat for display
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
             if (resultCode == Result.Ok)
             {
-                var imageView = FindViewById<ImageView>(Resource.Id.imageView1);
-                EditText xpoints = FindViewById<EditText>(Resource.Id.editText2);
-                EditText ypoints = FindViewById<EditText>(Resource.Id.editText3);
+                var imageView = FindViewById<ImageView>(Resource.Id.imgPicture);
+                EditText xpoints = FindViewById<EditText>(Resource.Id.txtX);
+                EditText ypoints = FindViewById<EditText>(Resource.Id.txtY);
                 xdim = int.Parse(xpoints.Text);
                 ydim = int.Parse(ypoints.Text);
                 int y = imageView.Height;
                 int x = imageView.Width;
 
-                //imageView.SetImageURI(data.Data);
                 using (var bmp = Android.Provider.MediaStore.Images.Media.GetBitmap(ContentResolver, data.Data))
                 {
                     using (var bmpScaled = Bitmap.CreateScaledBitmap(bmp, xdim, ydim, false))
@@ -270,19 +250,16 @@ namespace Image2ArtNet
                         }
                     }
 
-
-                    //Bitmap bmp = Android.Provider.MediaStore.Images.Media.GetBitmap(ContentResolver, data.Data);
-
-
                 }
+
                 imageView.BuildDrawingCache(true);
             }
         }
 
-
+        // save preferences
         protected override void OnPause()
         {
-            base.OnPause(); // Always call the superclass first
+            base.OnPause(); 
 
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Android.App.Application.Context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -292,13 +269,10 @@ namespace Image2ArtNet
             editor.PutString("IP", IP.Text);
             editor.PutString("xpoints", xpoints.Text);
             editor.PutString("ypoints", ypoints.Text);
-            // editor.Commit();    // applies changes synchronously on older APIs
-            editor.Apply();        // applies changes asynchronously on newer APIs
+            editor.Commit();  
+            editor.Apply();  
 
         }
-
-
-
     }
 }
 

@@ -9,13 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout2">
         <Button
-            android:id="@+id/MyButton"
-            android:text="@string/Hello"
+            android:id="@+id/btnSelect"
+            android:text="Select Image"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
         <Button
             android:text="Send to Display"
-            android:id="@+id/button1"
+            android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
     </LinearLayout>
@@ -23,7 +23,7 @@
         android:src="@android:drawable/ic_menu_gallery"
         android:layout_width="240dp"
         android:layout_height="240dp"
-        android:id="@+id/imageView1"
+        android:id="@+id/imgPicture"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
@@ -35,34 +35,34 @@
         android:id="@+id/linearLayout3">
         <Button
             android:text="Store"
-            android:id="@+id/button2"
+            android:id="@+id/btnStore"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
         <Button
             android:text="Recall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/button3" />
+            android:id="@+id/btnRecall" />
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/spinner1" />
+            android:id="@+id/spnMemory" />
     </LinearLayout>
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/switch1"
+        android:id="@+id/swiSerpentine"
         android:text=" Serpentine"
         android:checked="true" />
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/switch2"
+        android:id="@+id/swiFlipHor"
         android:text=" Flip Horizontal" />
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/switch3"
+        android:id="@+id/swiFlipVer"
         android:text=" Flip Vertical" />
     <LinearLayout
         android:orientation="horizontal"
@@ -74,9 +74,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/textView2" />
+            android:id="@+id/lblIP" />
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/txtIP"
             android:text="2.0.0.5"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -87,12 +87,12 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/textView3" />
+            android:id="@+id/lblX" />
         <EditText
             android:inputType="number"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/editText2"
+            android:id="@+id/txtX"
             android:text="12"
             android:singleLine="true" />
         <TextView
@@ -100,12 +100,12 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/textView4" />
+            android:id="@+id/lblY" />
         <EditText
             android:inputType="number"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/editText3"
+            android:id="@+id/txtY"
             android:text="12"
             android:singleLine="true" />
     </LinearLayout>
@@ -114,6 +114,6 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1"
+        android:id="@+id/lblAuthor"
         android:textColor="@android:color/holo_blue_dark" />
 </LinearLayout>

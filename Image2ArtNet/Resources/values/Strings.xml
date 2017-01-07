@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Hello">Select Image</string>
     <string name="ApplicationName">12x12</string>
   <string name="number_prompt">Choose a memory</string>
   <string-array name="number_array">
