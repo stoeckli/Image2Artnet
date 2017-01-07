@@ -10,11 +10,12 @@ using Android.Views;
 using Android.Widget;
 using Android.Graphics;
 using Android.OS;
-
+using Android.Content.PM;
+using Android.Preferences;
 
 namespace Image2ArtNet
 {
-    [Activity(Label = "12x12", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "12x12", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : Activity
     {
         int count = 0;
@@ -24,6 +25,13 @@ namespace Image2ArtNet
         BinaryWriter br;
         int xdim = 12;
         int ydim = 12;
+        Switch serpentine;
+        Switch fliphor;
+        Switch flipver;
+        EditText IP;
+        EditText xpoints;
+        EditText ypoints;
+
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -35,16 +43,43 @@ namespace Image2ArtNet
             // Get our button from the layout resource,
             // and attach an event to it
             Button button = FindViewById<Button>(Resource.Id.MyButton);
-            ImageView image = FindViewById<ImageView>(Resource.Id.imageView1);
             Button button1 = FindViewById<Button>(Resource.Id.button1);
-            Switch serpentine = FindViewById<Switch>(Resource.Id.switch1);
-            Switch fliphor = FindViewById<Switch>(Resource.Id.switch2);
-            Switch flipver = FindViewById<Switch>(Resource.Id.switch3);
-            EditText IP = FindViewById<EditText>(Resource.Id.editText1);
-            EditText xpoints = FindViewById<EditText>(Resource.Id.editText2);
-            EditText ypoints = FindViewById<EditText>(Resource.Id.editText3);
+            ImageView image = FindViewById<ImageView>(Resource.Id.imageView1);
+            Button button2 = FindViewById<Button>(Resource.Id.button2);
+            Button button3 = FindViewById<Button>(Resource.Id.button3);
+            serpentine = FindViewById<Switch>(Resource.Id.switch1);
+            fliphor = FindViewById<Switch>(Resource.Id.switch2);
+            flipver = FindViewById<Switch>(Resource.Id.switch3);
+            IP = FindViewById<EditText>(Resource.Id.editText1);
+            xpoints = FindViewById<EditText>(Resource.Id.editText2);
+            ypoints = FindViewById<EditText>(Resource.Id.editText3);
             xdim = int.Parse(xpoints.Text);
             ydim = int.Parse(ypoints.Text);
+
+
+
+            Spinner spinner = FindViewById<Spinner>(Resource.Id.spinner1);
+
+            // spinner.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinner_ItemSelected);
+            var adapter = ArrayAdapter.CreateFromResource(
+                    this, Resource.Array.number_array, Android.Resource.Layout.SimpleSpinnerItem);
+
+            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            spinner.Adapter = adapter;
+
+            using (ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Android.App.Application.Context))
+            {
+
+                serpentine.Checked = prefs.GetBoolean("serpentine", true);
+                flipver.Checked = prefs.GetBoolean("flipver", false);
+                fliphor.Checked = prefs.GetBoolean("fliphor", false);
+                IP.Text = prefs.GetString("IP", "2.0.0.5");
+                xpoints.Text = prefs.GetString("xpoints", "12");
+                ypoints.Text = prefs.GetString("ypoints", "12");
+
+            }
+            
+
 
             button.Click += delegate
             {
@@ -66,7 +101,6 @@ namespace Image2ArtNet
                Bitmap bmp = Bitmap.CreateBitmap(image.GetDrawingCache(true));
 
                byte[] buffer = new byte[512];
-               string artnet = "Art-net";
                byte[] pix;
 
                //System.Buffer.BlockCopy(artnet.ToCharArray(), 0, buffer, 0, artnet.Length);
@@ -103,9 +137,7 @@ namespace Image2ArtNet
                                 144,146,148,150,152,154,156,158,160,162,164,167,169,171,173,175,
                                 177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
                                 215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
-
-               bool snake = false;
-
+               
 
 
                for (int yn = 0; yn < ydim; yn++)
@@ -167,7 +199,51 @@ namespace Image2ArtNet
                }
 
            };
- }
+
+            button2.Click += delegate
+            {
+
+                using (WebClient client = new WebClient())
+                {
+                    try
+                    {
+                        // Download data.
+                        string value = client.DownloadString("http://" + IP.Text + "/?file=save&nr=" + spinner.SelectedItemPosition.ToString());
+                        
+                    }
+                    catch
+                    {
+
+                    }
+
+
+                }
+
+            };
+
+
+            button3.Click += delegate
+            {
+
+                using (WebClient client = new WebClient())
+                {
+                    try
+                    {
+                        // Download data.
+                        string value = client.DownloadString("http://" + IP.Text + "/?file=load&nr=" + spinner.SelectedItemPosition.ToString());
+
+                    }
+                    catch
+                    {
+
+                    }
+
+
+                }
+
+            };
+
+        }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
@@ -200,14 +276,26 @@ namespace Image2ArtNet
 
                 }
                 imageView.BuildDrawingCache(true);
-
-
-
             }
         }
 
 
+        protected override void OnPause()
+        {
+            base.OnPause(); // Always call the superclass first
 
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Android.App.Application.Context);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutBoolean("serpentine", serpentine.Checked);
+            editor.PutBoolean("flipver", flipver.Checked);
+            editor.PutBoolean("fliphor", fliphor.Checked);
+            editor.PutString("IP", IP.Text);
+            editor.PutString("xpoints", xpoints.Text);
+            editor.PutString("ypoints", ypoints.Text);
+            // editor.Commit();    // applies changes synchronously on older APIs
+            editor.Apply();        // applies changes asynchronously on newer APIs
+
+        }
 
 
 

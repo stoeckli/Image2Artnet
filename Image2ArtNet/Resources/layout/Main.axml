@@ -3,16 +3,22 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <Button
-        android:id="@+id/MyButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Hello" />
-    <Button
-        android:text="Send to Display"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button1" />
+        android:id="@+id/linearLayout2">
+        <Button
+            android:id="@+id/MyButton"
+            android:text="@string/Hello"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <Button
+            android:text="Send to Display"
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
     <ImageView
         android:src="@android:drawable/ic_menu_gallery"
         android:layout_width="240dp"
@@ -22,6 +28,26 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout3">
+        <Button
+            android:text="Store"
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <Button
+            android:text="Recall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/button3" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/spinner1" />
+    </LinearLayout>
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,7 +79,9 @@
             android:id="@+id/editText1"
             android:text="2.0.0.5"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:inputType="textUri" />
         <TextView
             android:text="               X"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -65,7 +93,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/editText2"
-            android:text="12" />
+            android:text="12"
+            android:singleLine="true" />
         <TextView
             android:text="               Y"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -77,10 +106,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/editText3"
-            android:text="12" />
+            android:text="12"
+            android:singleLine="true" />
     </LinearLayout>
     <TextView
-        android:text=" Programmed by Markus Stoeckli | stoeckli.net | 2015"
+        android:text=" Markus Stoeckli | stoeckli.net | 2015"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
