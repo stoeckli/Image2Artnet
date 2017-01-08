@@ -85,62 +85,53 @@ namespace Image2ArtNet
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060006
-			public const int btnRecall = 2131099654;
-			
-			// aapt resource value: 0x7f060001
-			public const int btnSelect = 2131099649;
-			
-			// aapt resource value: 0x7f060002
-			public const int btnSend = 2131099650;
-			
-			// aapt resource value: 0x7f060005
-			public const int btnStore = 2131099653;
-			
-			// aapt resource value: 0x7f060003
-			public const int imgPicture = 2131099651;
-			
-			// aapt resource value: 0x7f060012
-			public const int lblAuthor = 2131099666;
-			
-			// aapt resource value: 0x7f06000c
-			public const int lblIP = 2131099660;
-			
-			// aapt resource value: 0x7f06000e
-			public const int lblX = 2131099662;
-			
-			// aapt resource value: 0x7f060010
-			public const int lblY = 2131099664;
-			
-			// aapt resource value: 0x7f06000b
-			public const int linearLayout1 = 2131099659;
+			// aapt resource value: 0x7f06000d
+			public const int btnRecall = 2131099661;
 			
 			// aapt resource value: 0x7f060000
-			public const int linearLayout2 = 2131099648;
+			public const int btnSelect = 2131099648;
 			
-			// aapt resource value: 0x7f060004
-			public const int linearLayout3 = 2131099652;
+			// aapt resource value: 0x7f060001
+			public const int btnSend = 2131099649;
 			
-			// aapt resource value: 0x7f060007
-			public const int spnMemory = 2131099655;
-			
-			// aapt resource value: 0x7f060009
-			public const int swiFlipHor = 2131099657;
-			
-			// aapt resource value: 0x7f06000a
-			public const int swiFlipVer = 2131099658;
-			
-			// aapt resource value: 0x7f060008
-			public const int swiSerpentine = 2131099656;
-			
-			// aapt resource value: 0x7f06000d
-			public const int txtIP = 2131099661;
+			// aapt resource value: 0x7f06000c
+			public const int btnStore = 2131099660;
 			
 			// aapt resource value: 0x7f06000f
-			public const int txtX = 2131099663;
+			public const int imgPicture = 2131099663;
 			
-			// aapt resource value: 0x7f060011
-			public const int txtY = 2131099665;
+			// aapt resource value: 0x7f060002
+			public const int lblAuthor = 2131099650;
+			
+			// aapt resource value: 0x7f060003
+			public const int lblIP = 2131099651;
+			
+			// aapt resource value: 0x7f060005
+			public const int lblX = 2131099653;
+			
+			// aapt resource value: 0x7f060007
+			public const int lblY = 2131099655;
+			
+			// aapt resource value: 0x7f06000e
+			public const int spnMemory = 2131099662;
+			
+			// aapt resource value: 0x7f06000a
+			public const int swiFlipHor = 2131099658;
+			
+			// aapt resource value: 0x7f060009
+			public const int swiFlipVer = 2131099657;
+			
+			// aapt resource value: 0x7f06000b
+			public const int swiSerpentine = 2131099659;
+			
+			// aapt resource value: 0x7f060004
+			public const int txtIP = 2131099652;
+			
+			// aapt resource value: 0x7f060006
+			public const int txtX = 2131099654;
+			
+			// aapt resource value: 0x7f060008
+			public const int txtY = 2131099656;
 			
 			static Id()
 			{

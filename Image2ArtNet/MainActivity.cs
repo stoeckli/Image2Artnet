@@ -11,10 +11,11 @@ using Android.Graphics;
 using Android.OS;
 using Android.Content.PM;
 using Android.Preferences;
+using System.Threading;
 
 namespace Image2ArtNet
 {
-    [Activity(Label = "12x12", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
+    [Activity(Label = "12x12", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait, Theme = "@android:style/Theme.Holo")]
     public class MainActivity : Activity
     {
         UdpClient client;
@@ -26,6 +27,8 @@ namespace Image2ArtNet
         EditText IP;
         EditText xpoints;
         EditText ypoints;
+        TextView status;
+        Bitmap bmpScaled;
 
 
         protected override void OnCreate(Bundle bundle)
@@ -47,6 +50,8 @@ namespace Image2ArtNet
             IP = FindViewById<EditText>(Resource.Id.txtIP);
             xpoints = FindViewById<EditText>(Resource.Id.txtX);
             ypoints = FindViewById<EditText>(Resource.Id.txtY);
+            status = FindViewById<TextView>(Resource.Id.lblAuthor);
+
             xdim = int.Parse(xpoints.Text);
             ydim = int.Parse(ypoints.Text);
 
@@ -86,19 +91,20 @@ namespace Image2ArtNet
             // Send the image data to the display
             btnSend.Click += delegate
             {
+                if ((xdim * ydim) > 170)
+                {
+                    status.Text = "ERROR: Max 170 LEDs possible";
+                    return;
+                }
 
-                image.BuildDrawingCache(true);
-                Bitmap bmp = Bitmap.CreateBitmap(image.GetDrawingCache(true));
+                if (bmpScaled == null)
+                {
+                    status.Text = "ERROR: No image selected";
+                    return;
+                }
 
                 byte[] buffer = new byte[512];
                 byte[] pix;
-
-                pix = BitConverter.GetBytes(bmp.GetPixel(1, 1));
-
-                image.BuildDrawingCache(false);
-
-                int xmax = image.Width;
-                int ymax = image.Height;
 
                 int pos;
                 int x;
@@ -128,7 +134,7 @@ namespace Image2ArtNet
                 {
                     for (int xn = 0; xn < xdim; xn++)
                     {
-                        pix = BitConverter.GetBytes(bmp.GetPixel(1 + xn * (xmax / xdim), 1 + (ydim - yn - 1) * (ymax / ydim)));
+                        pix = BitConverter.GetBytes(bmpScaled.GetPixel(xn, (ydim - yn - 1)));
 
                         if (fliphor.Checked)
                         {
@@ -176,10 +182,13 @@ namespace Image2ArtNet
                 {
                     client.Send(buffer, buffer.Length, IP.Text, 6454);
                     client.Close();
+                    status.Text = "Data sent";
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+
+                   status.Text = "ERROR: Not connected";
+
                 }
 
             };
@@ -187,43 +196,53 @@ namespace Image2ArtNet
             // store data to display memory
             btnStore.Click += delegate
             {
-
                 using (WebClient client = new WebClient())
                 {
                     try
                     {
-                        string value = client.DownloadString("http://" + IP.Text + "/?file=save&nr=" + spinner.SelectedItemPosition.ToString());                        
+                        status.Text = "Data stored in display memory";
+                        client.DownloadString("http://" + IP.Text + "/?file=save&nr=" + spinner.SelectedItemPosition.ToString());
                     }
-                    catch
+                    catch (Exception ex)
                     {
-
+                        if (ex.Message.StartsWith("Error: ConnectFailure"))
+                        {
+                            status.Text = "ERROR: Diplay does not reply";
+                        }
                     }
-
 
                 }
-
             };
 
             // recall data prom display memory
             btnRecall.Click += delegate
             {
-
                 using (WebClient client = new WebClient())
                 {
                     try
                     {
-                        string value = client.DownloadString("http://" + IP.Text + "/?file=load&nr=" + spinner.SelectedItemPosition.ToString());
+                        status.Text = "Data recalled from display memory";
+                        string sendString = "http://" + IP.Text + "/?file=load&nr=" + spinner.SelectedItemPosition.ToString();
+                        client.DownloadString(sendString);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-
+                        if (ex.Message.StartsWith("Error: ConnectFailure"))
+                        {
+                            status.Text = "ERROR: Diplay does not reply";
+                        }
                     }
-
+                        
+                    
                 }
-
             };
 
         }
+
+
+      
+
+
 
         // image selected, reformat for display
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -240,18 +259,24 @@ namespace Image2ArtNet
                 int y = imageView.Height;
                 int x = imageView.Width;
 
-                using (var bmp = Android.Provider.MediaStore.Images.Media.GetBitmap(ContentResolver, data.Data))
+                if (x > y)
                 {
-                    using (var bmpScaled = Bitmap.CreateScaledBitmap(bmp, xdim, ydim, false))
-                    {
-                        using (var bmpScaled12 = Bitmap.CreateScaledBitmap(bmpScaled, x, y, false))
-                        {
-                            imageView.SetImageBitmap(bmpScaled12);
-                        }
-                    }
-
+                    x = y;
+                }
+                else
+                {
+                    y = x;
                 }
 
+                var bmp = Android.Provider.MediaStore.Images.Media.GetBitmap(ContentResolver, data.Data);
+                bmpScaled = Bitmap.CreateScaledBitmap(bmp, xdim, ydim, false);
+                    
+                using (var bmpScaled12 = Bitmap.CreateScaledBitmap(bmpScaled, x, y, false))
+                {
+                    imageView.SetImageBitmap(bmpScaled12);
+                }
+ 
+                
                 imageView.BuildDrawingCache(true);
             }
         }

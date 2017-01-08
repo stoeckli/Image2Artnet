@@ -1,119 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <LinearLayout
-        android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+    <Button
+        android:id="@+id/btnSelect"
+        android:text="Select Image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:text="Send to Display"
+        android:id="@+id/btnSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btnSelect" />
+    <TextView
+        android:text=" Markus Stoeckli | stoeckli.net | 2016"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblAuthor"
+        android:textColor="@android:color/holo_blue_dark"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+    <TextView
+        android:text="IP"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblIP"
+        android:paddingBottom="12dp"
+        android:paddingRight="10dp"
+        android:layout_above="@id/lblAuthor" />
+    <EditText
+        android:id="@+id/txtIP"
+        android:text="2.0.0.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:inputType="textUri"
+        android:layout_above="@id/lblAuthor"
+        android:layout_toRightOf="@id/lblIP" />
+    <TextView
+        android:text="X"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblX"
+        android:layout_toRightOf="@id/txtIP"
+        android:layout_alignBaseline="@id/lblIP"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp" />
+    <EditText
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtX"
+        android:text="12"
+        android:singleLine="true"
+        android:layout_toRightOf="@id/lblX"
+        android:layout_above="@id/lblAuthor" />
+    <TextView
+        android:text="Y"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblY"
+        android:layout_toRightOf="@id/txtX"
+        android:layout_alignBaseline="@id/lblIP"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp" />
+    <EditText
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtY"
+        android:text="12"
+        android:singleLine="true"
+        android:layout_toRightOf="@id/lblY"
+        android:layout_above="@id/lblAuthor" />
+    <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout2">
-        <Button
-            android:id="@+id/btnSelect"
-            android:text="Select Image"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        <Button
-            android:text="Send to Display"
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-    <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:id="@+id/imgPicture"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp" />
-    <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/swiFlipVer"
+        android:text=" Flip Vertical"
+        android:layout_above="@id/txtIP" />
+    <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout3">
-        <Button
-            android:text="Store"
-            android:id="@+id/btnStore"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        <Button
-            android:text="Recall"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/btnRecall" />
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/spnMemory" />
-    </LinearLayout>
+        android:id="@+id/swiFlipHor"
+        android:text=" Flip Horizontal"
+        android:layout_above="@id/swiFlipVer" />
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/swiSerpentine"
         android:text=" Serpentine"
-        android:checked="true" />
-    <Switch
+        android:checked="true"
+        android:layout_above="@id/swiFlipHor" />
+    <Button
+        android:text="Store"
+        android:id="@+id/btnStore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/swiSerpentine" />
+    <Button
+        android:text="Recall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnRecall"
+        android:layout_toRightOf="@id/btnStore"
+        android:layout_alignBottom="@id/btnStore" />
+    <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/swiFlipHor"
-        android:text=" Flip Horizontal" />
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/swiFlipVer"
-        android:text=" Flip Vertical" />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
-        <TextView
-            android:text=" IP"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/lblIP" />
-        <EditText
-            android:id="@+id/txtIP"
-            android:text="2.0.0.5"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:singleLine="true"
-            android:inputType="textUri" />
-        <TextView
-            android:text="               X"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/lblX" />
-        <EditText
-            android:inputType="number"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/txtX"
-            android:text="12"
-            android:singleLine="true" />
-        <TextView
-            android:text="               Y"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/lblY" />
-        <EditText
-            android:inputType="number"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/txtY"
-            android:text="12"
-            android:singleLine="true" />
-    </LinearLayout>
-    <TextView
-        android:text=" Markus Stoeckli | stoeckli.net | 2015"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lblAuthor"
-        android:textColor="@android:color/holo_blue_dark" />
-</LinearLayout>
+        android:id="@+id/spnMemory"
+        android:layout_toRightOf="@id/btnRecall"
+        android:layout_alignBottom="@id/btnStore"
+        android:layout_alignTop="@id/btnStore" />
+    <ImageView
+        android:src="@android:drawable/ic_menu_gallery"
+        android:layout_width="fill_parent"
+        android:id="@+id/imgPicture"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/btnSelect"
+        android:layout_above="@id/btnStore"
+        android:adjustViewBounds="true" />
+</RelativeLayout>
